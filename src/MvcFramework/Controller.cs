@@ -79,7 +79,7 @@ namespace MvcFramework
 
         protected IHttpResponse Redirect(string location)
         {
-            this.Response.StatusCode = HttpResponseStatusCode.Redirect;
+            this.Response.StatusCode = HttpResponseStatusCode.SeeOther;
             this.Response.Headers.Add(new HttpHeader("Location", location));
 
             return this.Response;

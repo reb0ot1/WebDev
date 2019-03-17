@@ -74,7 +74,8 @@ namespace CakesWebApp.Controllers
                 return this.ServerError(e.Message);
             }
 
-            return new HtmlResult("<h1>Registered</h1>", HttpResponseStatusCode.Ok);
+
+            return this.Redirect("/");
         }
 
         public IHttpResponse Login()
@@ -97,28 +98,27 @@ namespace CakesWebApp.Controllers
                 return this.BadRequestError("Invalid username and password");
             }
             
-            var response = new RedirectResult("/");
+            
             var userCookie = this._userCookieService.GetUserCookie(user.Username);
-            response.AddCookie(new HttpCookie(".auth-cakes", userCookie, 7));
+            this.Response.AddCookie(new HttpCookie(".auth-cakes", userCookie, 7));
 
-            return response;
+            return this.Redirect("/");
         }
 
         public IHttpResponse Logout()
         {
             if (!this.Request.Cookies.ContainsCookie(".auth-cakes"))
             {
-                return new RedirectResult("/");
+                return this.Redirect("/");
             }
 
             var cookie = this.Request.Cookies.GetCookie(".auth-cakes");
 
             cookie.Delete();
 
-            var response = new RedirectResult("/");
-            response.AddCookie(cookie);
+            this.Response.AddCookie(cookie);
 
-            return response;
+            return this.Redirect("/");
         }
     }
 }

@@ -18,7 +18,10 @@ namespace CakesWebApp
 
         public IHttpResponse HelloUSer()
         {
-            return new HtmlResult($"Hello {this.GetUserName(this.Request)}", HttpResponseStatusCode.Ok); 
+            return this.View("HelloUser", 
+                new Dictionary<string, string> {
+                    {"UserName", this.GetUserName() }
+                }); 
         }
     }
 }

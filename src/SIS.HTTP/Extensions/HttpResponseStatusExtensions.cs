@@ -19,6 +19,7 @@ namespace SIS.HTTP.Extensions
             {
                 { HttpResponseStatusCode.Ok, "Ok"},
                 { HttpResponseStatusCode.Created, "Created"},
+                { HttpResponseStatusCode.Redirect, "Redirect"},
                 { HttpResponseStatusCode.Found, "Found"},
                 { HttpResponseStatusCode.SeeOther, "See Other"},
                 { HttpResponseStatusCode.BadRequest, "Bad Request"},

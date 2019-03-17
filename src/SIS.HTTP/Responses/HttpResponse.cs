@@ -15,16 +15,15 @@ namespace SIS.HTTP.Responses
 
         public HttpResponse()
         {
-
-        }
-
-        public HttpResponse(HttpResponseStatusCode statusCode)
-        {
             this.Headers = new HttpHeaderCollection();
             this.Cookies = new HttpCookieCollection();
             this.Content = new byte[0];
-            this.StatusCode = statusCode;
+        }
 
+        public HttpResponse(HttpResponseStatusCode statusCode) : 
+            this()
+        {
+            this.StatusCode = statusCode;
         }
 
         public HttpResponseStatusCode StatusCode { get; set; }

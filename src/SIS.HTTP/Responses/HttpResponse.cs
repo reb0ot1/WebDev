@@ -55,21 +55,20 @@ namespace SIS.HTTP.Responses
         {
             StringBuilder result = new StringBuilder();
 
-            result.Append($"{GlobalConstants.HttpOneProtocolFragment} {this.StatusCode.GetResponseLine()}");
-
-            result.Append(Environment.NewLine);
+            result.Append($"{GlobalConstants.HttpOneProtocolFragment} {(int)this.StatusCode} {this.StatusCode.ToString()}");
+            result.Append(GlobalConstants.NewLine);
             result.Append(this.Headers.ToString());
-            result.Append(Environment.NewLine);
+            result.Append(GlobalConstants.NewLine);
 
             if (this.Cookies.HasCookies())
             {
                 foreach (var cookie in this.Cookies)
                 {
-                    result.Append($"Set-Cookie: {cookie.ToString()}").Append(Environment.NewLine);
+                    result.Append($"Set-Cookie: {cookie.ToString()}").Append(GlobalConstants.NewLine);
                 }
             }
 
-            result.Append(Environment.NewLine);
+            result.Append(GlobalConstants.NewLine);
 
             return result.ToString();
         }

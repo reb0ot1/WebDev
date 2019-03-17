@@ -9,5 +9,7 @@ namespace SIS.HTTP.Common
         public const string HttpOneProtocolFragment = "HTTP/1.1";
 
         public const string HostName = "Host";
+
+        public const string NewLine = "\r\n";
     }
 }

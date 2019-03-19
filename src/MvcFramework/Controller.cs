@@ -11,9 +11,9 @@ using SIS.HTTP.Responses;
 
 namespace MvcFramework
 {
-    public class Controller
+    public abstract class Controller
     {
-        public Controller()
+        protected Controller()
         {
             this._userCookieService = new UserCookieService();
             this.Response = new HttpResponse();
@@ -24,20 +24,22 @@ namespace MvcFramework
 
         public IHttpResponse Response { get; set; }
 
-        protected IUserCookieService _userCookieService { get; }
-        
-        protected string GetUserName()
-        {
-            if (this.Request.Cookies.ContainsCookie(".auth-cakes"))
+        protected string User {
+            get
             {
-                HttpCookie cookie = this.Request.Cookies.GetCookie(".auth-cakes");
-                var cookieContent = cookie.Value;
+                if (this.Request.Cookies.ContainsCookie(".auth-cakes"))
+                {
+                    HttpCookie cookie = this.Request.Cookies.GetCookie(".auth-cakes");
+                    var cookieContent = cookie.Value;
 
-                return this._userCookieService.GetUserData(cookieContent);
+                    return this._userCookieService.GetUserData(cookieContent);
+                }
+
+                return null;
             }
-
-            return null;
         }
+
+        protected IUserCookieService _userCookieService { get; }
 
         protected IHttpResponse View(string viewName, IDictionary<string, string> viewBag = null)
         {

@@ -4,7 +4,7 @@ namespace MvcFramework
 {
     public interface IMvcApplication
     {
-        void Configure(ServerRoutingTable routingTable);
+        void Configure();
 
         void ConfigureServices();
     }

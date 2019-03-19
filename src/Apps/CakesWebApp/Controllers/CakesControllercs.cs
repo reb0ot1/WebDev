@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using CakesWebApp.Extensions;
 using CakesWebApp.Models;
+using MvcFramework;
 using SIS.HTTP.Requests;
 using SIS.HTTP.Responses;
 using SIS.WebServer.Results;
@@ -12,11 +13,13 @@ namespace CakesWebApp.Controllers
 {
     public class CakesController : BaseController
     {
+        [HttpGet("/cakes/add")]
         public IHttpResponse AddCakes()
         {
             return this.View("AddCakes");
         }
 
+        [HttpPost("/cakes/add")]
         public IHttpResponse DoAddCakes()
         {
             var name = this.Request.FormData["name"].ToString().Trim().UrlDecode();
@@ -44,9 +47,10 @@ namespace CakesWebApp.Controllers
             }
 
             // Redirect
-            return this.Redirect("/");
+            return this.Redirect    ("/");
         }
 
+        [HttpGet("/cakes/view")]
         public IHttpResponse ById()
         {
             var id = int.Parse(this.Request.QueryData["id"].ToString());

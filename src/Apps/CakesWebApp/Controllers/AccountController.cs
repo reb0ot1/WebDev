@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CakesWebApp.Models;
+using MvcFramework;
 using MvcFramework.Services;
 using SIS.HTTP.Cookies;
 using SIS.HTTP.Enums;
@@ -21,11 +22,13 @@ namespace CakesWebApp.Controllers
             this._hashService = new HashService();
         }
 
+        [HttpGet("/register")]
         public IHttpResponse Register()
         {
             return this.View("Register");
         }
 
+        [HttpPost("/register")]
         public IHttpResponse DoRegister()
         {
             var userName = this.Request.FormData["username"].ToString().Trim();
@@ -78,11 +81,13 @@ namespace CakesWebApp.Controllers
             return this.Redirect("/");
         }
 
+        [HttpGet("/login")]
         public IHttpResponse Login()
         {
             return this.View("Login");
         }
 
+        [HttpPost("/login")]
         public IHttpResponse DoLogin()
         {
             var userName = this.Request.FormData["username"].ToString().Trim();
@@ -105,6 +110,7 @@ namespace CakesWebApp.Controllers
             return this.Redirect("/");
         }
 
+        [HttpGet("/logout")]
         public IHttpResponse Logout()
         {
             if (!this.Request.Cookies.ContainsCookie(".auth-cakes"))

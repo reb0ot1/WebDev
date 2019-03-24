@@ -66,11 +66,6 @@ namespace MvcFramework
 
         private static IHttpResponse ExecuteAction(Type controller, MethodInfo action, IHttpRequest request, IServiceCollection serviceCollection)
         {
-            //1. Create Instance of controller name
-            //2. Set request
-            //3. Invoke action name
-            //4. Return action result
-
             var controllerInstance = serviceCollection.CreateInstance(controller) as Controller;
 
             if (controllerInstance == null)
@@ -79,10 +74,37 @@ namespace MvcFramework
             }
 
             controllerInstance.Request = request;
-
             controllerInstance.UserCookieService = serviceCollection.CreateInstance<IUserCookieService>();
 
-            var actionResult = action.Invoke(controllerInstance, new object[] { }) as IHttpResponse;
+            var actionParameters = action.GetParameters();
+            var actionParameterObjects = new List<object>();
+
+            foreach (var actionParameter in actionParameters)
+            {
+                var instance = serviceCollection.CreateInstance(actionParameter.ParameterType);
+
+                var properties = actionParameter.ParameterType.GetProperties();
+                foreach (var property in properties)
+                {
+                    // TODO: Support IEnumerable 
+                    var key = property.Name.ToLower();
+                    object value = null;
+                    if (request.FormData.Any(x => x.Key.ToLower() == key))
+                    {
+                        value = request.FormData.First(x => x.Key.ToLower() == key).Value.ToString();
+                    }
+                    else if (request.QueryData.Any(x => x.Key.ToLower() == key))
+                    {
+                        value = request.QueryData.First(x => x.Key.ToLower() == key).Value.ToString();
+                    }
+
+                    property.SetMethod.Invoke(instance, new object[] { value });
+                }
+
+                actionParameterObjects.Add(instance);
+            }
+
+            var actionResult = action.Invoke(controllerInstance, actionParameterObjects.ToArray()) as IHttpResponse;
 
             return actionResult;
 

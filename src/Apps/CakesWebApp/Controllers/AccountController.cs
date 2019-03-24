@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CakesWebApp.Models;
+using CakesWebApp.ViewModels.Account;
 using MvcFramework;
 using MvcFramework.Services;
 using SIS.HTTP.Cookies;
@@ -29,38 +30,38 @@ namespace CakesWebApp.Controllers
         }
 
         [HttpPost("/register")]
-        public IHttpResponse DoRegister()
+        public IHttpResponse DoRegister(DoRegisterInputVM model)
         {
-            var userName = this.Request.FormData["username"].ToString().Trim();
-            var password = this.Request.FormData["password"].ToString();
-            var confirmPassword = this.Request.FormData["confirmPassword"].ToString();
+            //var userName = this.Request.FormData["username"].ToString().Trim();
+            //var password = this.Request.FormData["password"].ToString();
+            //var confirmPassword = this.Request.FormData["confirmPassword"].ToString();
 
-            if (string.IsNullOrWhiteSpace(userName) || userName.Length < 4)
+            if (string.IsNullOrWhiteSpace(model.Username) || model.Username.Trim().Length < 4)
             {
                 return this.BadRequestError("Please provide username with length bigger than 4 symbols");
             }
 
-            if (Db.Users.Any(u => u.Name == userName))
+            if (Db.Users.Any(u => u.Name == model.Username.Trim()))
             {
                 return this.BadRequestError("This username already exists");
             }
 
-            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
+            if (string.IsNullOrEmpty(model.Password) || string.IsNullOrEmpty(model.ConfirmPassword))
             {
                 return this.BadRequestError("Please provide password");
             }
 
-            if (password != confirmPassword)
+            if (model.Password != model.ConfirmPassword)
             {
                 return this.BadRequestError("Passwords should match");
             }
 
-            var hashedPassword = this._hashService.Hash(password);
+            var hashedPassword = this._hashService.Hash(model.Password);
 
             var user = new User
             {
-                Name = userName,
-                Username = userName,
+                Name = model.Username.Trim(),
+                Username = model.Username,
                 Password = hashedPassword
             };
 

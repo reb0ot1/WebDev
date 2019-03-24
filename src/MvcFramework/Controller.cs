@@ -15,7 +15,6 @@ namespace MvcFramework
     {
         protected Controller()
         {
-            this._userCookieService = new UserCookieService();
             this.Response = new HttpResponse();
             this.Response.StatusCode = HttpResponseStatusCode.Ok;
         }
@@ -23,6 +22,8 @@ namespace MvcFramework
         public IHttpRequest Request { get; set; }
 
         public IHttpResponse Response { get; set; }
+
+        public IUserCookieService UserCookieService { get; internal set; }
 
         protected string User {
             get
@@ -32,14 +33,12 @@ namespace MvcFramework
                     HttpCookie cookie = this.Request.Cookies.GetCookie(".auth-cakes");
                     var cookieContent = cookie.Value;
 
-                    return this._userCookieService.GetUserData(cookieContent);
+                    return this.UserCookieService.GetUserData(cookieContent);
                 }
 
                 return null;
             }
         }
-
-        protected IUserCookieService _userCookieService { get; }
 
         protected IHttpResponse View(string viewName, IDictionary<string, string> viewBag = null)
         {

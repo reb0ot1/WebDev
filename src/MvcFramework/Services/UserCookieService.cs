@@ -3,12 +3,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using MvcFramework.Logger;
 
 namespace MvcFramework.Services
 {
     public class UserCookieService : IUserCookieService
     {
+        private readonly ILogger logger;
         private const string EncryptKey = "E946C8DF278CD5931069B522E695D4F2";
+
+        public UserCookieService(ILogger logger)
+        {
+            this.logger = logger;
+        }
 
         public string GetUserCookie(string userName)
         {
@@ -20,6 +27,7 @@ namespace MvcFramework.Services
 
         public string GetUserData(string cookieContent)
         {
+            this.logger.Log(cookieContent);
             return DecryptString(cookieContent, EncryptKey);
         }
 

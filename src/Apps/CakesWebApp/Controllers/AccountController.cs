@@ -17,9 +17,9 @@ namespace CakesWebApp.Controllers
     {
         private IHashService _hashService;
 
-        public AccountController()
+        public AccountController(IHashService hashService)
         {
-            this._hashService = new HashService();
+            this._hashService = hashService;
         }
 
         [HttpGet("/register")]
@@ -104,7 +104,7 @@ namespace CakesWebApp.Controllers
             }
             
             
-            var userCookie = this._userCookieService.GetUserCookie(user.Username);
+            var userCookie = this.UserCookieService.GetUserCookie(user.Username);
             this.Response.AddCookie(new HttpCookie(".auth-cakes", userCookie, 7));
 
             return this.Redirect("/");

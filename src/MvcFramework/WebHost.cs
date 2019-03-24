@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using MvcFramework.Services;
 using SIS.HTTP.Requests;
 using SIS.HTTP.Responses;
 using SIS.WebServer;
@@ -13,12 +14,14 @@ namespace MvcFramework
 {
     public static class WebHost
     {
+
         public static void Start(IMvcApplication application)
         {
-            application.ConfigureServices();
+            IServiceCollection dependencyContainer = new ServiceCollection();
+            application.ConfigureServices(dependencyContainer);
 
             ServerRoutingTable serverRoutingTable = new ServerRoutingTable();
-            AutoRegisterRoutes(serverRoutingTable, application);
+            AutoRegisterRoutes(serverRoutingTable, application, dependencyContainer);
 
             application.Configure();
 
@@ -27,7 +30,7 @@ namespace MvcFramework
             server.Run();
         }
 
-        private static void AutoRegisterRoutes(ServerRoutingTable routing, IMvcApplication application)
+        private static void AutoRegisterRoutes(ServerRoutingTable routing, IMvcApplication application, IServiceCollection serviceCollection)
         {
             var controllers = application.GetType().Assembly
                 //.GetAssembly(typeof(T).GetTypes().Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(Controller))));
@@ -55,20 +58,20 @@ namespace MvcFramework
 
                     
 
-                    routing.Add(httpAttribute.Method, httpAttribute.Path, (request) => ExecuteAction(controller, methodInfo, request));
+                    routing.Add(httpAttribute.Method, httpAttribute.Path, (request) => ExecuteAction(controller, methodInfo, request, serviceCollection));
                         
                 }
             }
         }
 
-        private static IHttpResponse ExecuteAction(Type controller, MethodInfo action, IHttpRequest request)
+        private static IHttpResponse ExecuteAction(Type controller, MethodInfo action, IHttpRequest request, IServiceCollection serviceCollection)
         {
             //1. Create Instance of controller name
             //2. Set request
             //3. Invoke action name
             //4. Return action result
 
-            var controllerInstance = Activator.CreateInstance(controller) as Controller;
+            var controllerInstance = serviceCollection.CreateInstance(controller) as Controller;
 
             if (controllerInstance == null)
             {
@@ -76,6 +79,8 @@ namespace MvcFramework
             }
 
             controllerInstance.Request = request;
+
+            controllerInstance.UserCookieService = serviceCollection.CreateInstance<IUserCookieService>();
 
             var actionResult = action.Invoke(controllerInstance, new object[] { }) as IHttpResponse;
 

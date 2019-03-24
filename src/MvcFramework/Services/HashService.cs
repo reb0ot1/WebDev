@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using MvcFramework.Logger;
 
 namespace MvcFramework.Services
 {
     public class HashService : IHashService
     {
-        public HashService()
-        {
+        private readonly ILogger logger;
 
+        public HashService(ILogger logger)
+        {
+            this.logger = logger;
         }
 
         public string Hash(string stringToHash)
@@ -19,6 +22,8 @@ namespace MvcFramework.Services
                 var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(stringToHash));
 
                 var hash = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+
+                this.logger.Log(hash);
 
                 return hash;
             }

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using CakesWebApp.Extensions;
 using CakesWebApp.Models;
+using CakesWebApp.ViewModels.Cakes;
 using MvcFramework;
 using SIS.HTTP.Requests;
 using SIS.HTTP.Responses;
@@ -20,20 +21,21 @@ namespace CakesWebApp.Controllers
         }
 
         [HttpPost("/cakes/add")]
-        public IHttpResponse DoAddCakes()
+        public IHttpResponse DoAddCakes(CakeVM model)
         {
-            var name = this.Request.FormData["name"].ToString().Trim().UrlDecode();
-            var price = decimal.Parse(this.Request.FormData["price"].ToString().UrlDecode());
-            var picture = this.Request.FormData["picture"].ToString().Trim().UrlDecode();
+            //var name = this.Request.FormData["name"].ToString().Trim().UrlDecode();
+            //var price = decimal.Parse(this.Request.FormData["price"].ToString().UrlDecode());
+            //var picture = this.Request.FormData["picture"].ToString().Trim().UrlDecode();
 
             // TODO: Validation
 
             var product = new Product
             {
-                Name = name,
-                Price = price,
-                Url = picture
+                Name = model.Name,
+                Price = model.Price,
+                Url = model.Picture.Trim().UrlDecode()
             };
+
             this.Db.Products.Add(product);
 
             try

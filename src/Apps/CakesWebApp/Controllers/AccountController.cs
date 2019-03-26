@@ -32,9 +32,6 @@ namespace CakesWebApp.Controllers
         [HttpPost("/register")]
         public IHttpResponse DoRegister(DoRegisterInputVM model)
         {
-            //var userName = this.Request.FormData["username"].ToString().Trim();
-            //var password = this.Request.FormData["password"].ToString();
-            //var confirmPassword = this.Request.FormData["confirmPassword"].ToString();
 
             if (string.IsNullOrWhiteSpace(model.Username) || model.Username.Trim().Length < 4)
             {
@@ -89,15 +86,11 @@ namespace CakesWebApp.Controllers
         }
 
         [HttpPost("/login")]
-        public IHttpResponse DoLogin()
+        public IHttpResponse DoLogin(UserVM model)
         {
-            var userName = this.Request.FormData["username"].ToString().Trim();
+            var hashedPassword = this._hashService.Hash(model.Password);
 
-            var password = this.Request.FormData["password"].ToString();
-
-            var hashedPassword = this._hashService.Hash(password);
-
-            var user = this.Db.Users.FirstOrDefault(u => u.Username == userName && u.Password == hashedPassword);
+            var user = this.Db.Users.FirstOrDefault(u => u.Username == model.Username.Trim() && u.Password == hashedPassword);
 
             if (user == null)
             {

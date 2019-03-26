@@ -37,7 +37,7 @@ namespace MvcFramework.Services
                 throw new Exception($"Type {type.FullName} cannot be instantiated");
             }
 
-            var constructor = type.GetConstructors().First();
+            var constructor = type.GetConstructors().OrderBy(x => x.GetParameters().Length).First();
             var constructorParameters = constructor.GetParameters();
 
             List<object> constructorParameterObjects = new List<object>();

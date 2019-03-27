@@ -110,7 +110,7 @@ namespace MvcFramework
                     {
                         // TODO: Support IEnumerable 
                         string stringValue = GetRequestData(request, property.Name);
-                        
+                        // Convert.ChangeType()    
                         object value = TryParse(stringValue, property.PropertyType);
 
                         property.SetMethod.Invoke(instance, new object[] { value });

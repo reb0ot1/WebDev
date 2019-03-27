@@ -7,11 +7,14 @@ namespace MvcFramework.Services
 {
     class ServiceCollection : IServiceCollection
     {
-        private IDictionary<Type, Type> dependencyContainer;
+        private readonly IDictionary<Type, Type> dependencyContainer;
+
+        private readonly IDictionary<Type, Func<object>> dependencyContainerWithFunc;
 
         public ServiceCollection()
         {
             this.dependencyContainer = new Dictionary<Type, Type>();
+            this.dependencyContainerWithFunc = new Dictionary<Type, Func<object>>();
         }
 
         public void AddService<TSource, TDestination>()
@@ -26,6 +29,10 @@ namespace MvcFramework.Services
 
         public object CreateInstance(Type type)
         {
+            if (this.dependencyContainerWithFunc.ContainsKey(type))
+            {
+                return this.dependencyContainerWithFunc[type]();
+            }
             
             if (this.dependencyContainer.ContainsKey(type))
             {
@@ -52,6 +59,12 @@ namespace MvcFramework.Services
             var obj = constructor.Invoke(constructorParameterObjects.ToArray());
 
             return obj;
+        }
+
+
+        public void AddService<T>(Func<T> p)
+        {
+            this.dependencyContainerWithFunc.Add(typeof(T), () => p() );
         }
     }
 }

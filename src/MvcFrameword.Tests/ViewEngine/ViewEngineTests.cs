@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using MvcFramework.Tests.TestModels;
 using MvcFramework.ViewEngine;
 using Xunit;
 
@@ -17,7 +19,13 @@ namespace MvcFramework.Tests.ViewEngine
 
             IViewEngine viewEngine = new MvcFramework.ViewEngine.ViewEngine();
 
-            var result = viewEngine.GetHtml(fileContent);
+            var model = new TestModel
+            {
+                String = "Username",
+                List = new List<string> { "Item1", "item2", "test", "123", "" }
+            };
+
+            var result = viewEngine.GetHtml(testViewName, fileContent, model);
 
             Assert.Equal(expectedResult, result);
         }

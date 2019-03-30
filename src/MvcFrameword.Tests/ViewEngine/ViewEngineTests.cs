@@ -9,7 +9,7 @@ namespace MvcFramework.Tests.ViewEngine
     public class ViewEngineTests
     {
         [Theory]
-        [InlineData("IfForEndForeach")]
+        [InlineData("IfForAndForeach")]
         [InlineData("ViewWithNoCode")]
         [InlineData("WorkWithViewModel")]
         public void RunTestViews(string testViewName)

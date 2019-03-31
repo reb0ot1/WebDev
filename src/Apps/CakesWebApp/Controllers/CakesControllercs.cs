@@ -62,13 +62,32 @@ namespace CakesWebApp.Controllers
                 return this.BadRequestError("Cake not found.");
             }
 
-            var viewBag = new Dictionary<string, string>
+            //var viewBag = new Dictionary<string, string>
+            //{
+            //    {"Name", product.Name},
+            //    {"Price", product.Price.ToString(CultureInfo.InvariantCulture)},
+            //    {"ImageUrl", product.Url}
+            //};
+            var viewModel = new ByIdViewModel
             {
-                {"Name", product.Name},
-                {"Price", product.Price.ToString(CultureInfo.InvariantCulture)},
-                {"ImageUrl", product.Url}
+                Name = product.Name,
+                Price = product.Price,
+                ImageUrl = product.Url
+
             };
-            return this.View("CakeById", viewBag);
+
+            return this.View("CakeById", viewModel);
         }
+
+        public class ByIdViewModel
+        {
+            public string Name { get; set; }
+
+            public decimal Price { get; set; }
+
+            public string ImageUrl { get; set; }
+        }
+        
     }
+
 }

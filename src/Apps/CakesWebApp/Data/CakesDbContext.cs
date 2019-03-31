@@ -18,7 +18,7 @@ namespace CakesWebApp.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=PROBOOK440-FED0;Database=Cakes;Integrated Security=True;");
+            optionsBuilder.UseSqlServer("Server=DESKTOP-L42LDS0\\SQLEXPRESS;Database=Cakes;Integrated Security=True;");
         }
     }
 }

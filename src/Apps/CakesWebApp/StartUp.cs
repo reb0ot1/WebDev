@@ -24,7 +24,8 @@ namespace CakesWebApp
             collection.AddService<ILogger, ConsoleLogger>();
 
             //Registraciq koqto vzima tip i vzima funkciq kato parametyr, koqto kogato q izvikame shte vryshta obekt ot tozi tip
-            collection.AddService<ILogger>(() => new FileLogger($"log_{DateTime.Now.Date.ToString()}.txt"));
+            //collection.AddService<ILogger>(() => new FileLogger($"log_{DateTime.Now.Date.ToString()}.txt"));
+            collection.AddService<ILogger>(() => new FileLogger($"log_.txt"));
 
         }
     }

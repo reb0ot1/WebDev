@@ -10,17 +10,11 @@
             <div class="col-md-3 col-sm-12">
                 <ul class="list-group">
                     <li class="list-group-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
-                    <!--@if (!User.IsLoggedIn)
-                    {-->
                     <li class="list-group-item"><i class="fas fa-user-check"></i> <a href="/login">Login</a></li>
                     <li class="list-group-item"><i class="fas fa-user-plus"></i> <a href="/register">Register</a></li>
-                    <!--}
-                    @else
-                    {-->
                     <li class="list-group-item"><i class="fas fa-user"></i> <a href="">My Profile</a></li>
                     <li class="list-group-item"><i class="fas fa-user"></i> <a href="/orders/list">My Orders</a></li>
                     <li class="list-group-item"><i class="fas fa-user-slash"></i> <a href="/logout">Logout</a></li>
-                    <!--  -->}
                     <li class="list-group-item"><i class="fas fa-home"></i> <a href="/cakes/add">Add cakes</a></li>
                     <li class="list-group-item">
                         <form action="/cakes/search" method="get">
@@ -32,10 +26,6 @@
             </div>
             <div class="col-md-9 col-sm-12">
                 @RenderBody()
-                <!--<hr />
-                { var year = DateTime.UtcNow.Year; }
-                { year = year + 1; }
-                Copyright &copy; @year-->
             </div>
         </div>
     </div>

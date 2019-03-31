@@ -79,6 +79,7 @@ namespace MvcFramework
             }
 
             controllerInstance.Request = request;
+            controllerInstance.ViewEngine = new ViewEngine.ViewEngine(); // TODO: Use service collection 
             controllerInstance.UserCookieService = serviceCollection.CreateInstance<IUserCookieService>();
 
             var actionParameters = GetActionParameterObjects(request, action, serviceCollection);

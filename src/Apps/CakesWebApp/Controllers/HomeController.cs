@@ -21,10 +21,13 @@ namespace CakesWebApp
         [HttpGet("/hello")]
         public IHttpResponse HelloUSer()
         {
-            return this.View("HelloUser", 
-                new Dictionary<string, string> {
-                    {"UserName", this.User }
-                }); 
+            return this.View("HelloUser",
+                new HelloUserViewModel { Username = this.User }); 
+        }
+
+        public class HelloUserViewModel
+        {
+            public string Username { get; set; }
         }
     }
 }

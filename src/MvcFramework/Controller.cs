@@ -64,7 +64,10 @@ namespace MvcFramework
 
         protected IHttpResponse BadRequestError(string errorMessage)
         {
-            this.PrepareHtmlResult($"<h1>{errorMessage}</h1>");
+            var viewModel = new ErrorViewModel { Error = errorMessage };
+            var contentAll = this.GetViewContent("Error", viewModel);
+
+            this.PrepareHtmlResult(contentAll);
             this.Response.StatusCode = HttpResponseStatusCode.BadRequest;
 
             return this.Response;
@@ -72,7 +75,10 @@ namespace MvcFramework
 
         protected IHttpResponse ServerError(string errorMessage)
         {
-            this.PrepareHtmlResult($"<h1>{errorMessage}</h1>");
+            var viewModel = new ErrorViewModel { Error = errorMessage };
+            var contentAll = this.GetViewContent("Error", viewModel);
+
+            this.PrepareHtmlResult(contentAll);
             this.Response.StatusCode = HttpResponseStatusCode.InternalServerErorr;
 
             return this.Response;
@@ -103,11 +109,10 @@ namespace MvcFramework
             return this.Response;
         }
 
-        private string GetViewContent<T>(string viewName,
-            T model)
+        private string GetViewContent<T>(string viewName, T model)
         {
 
-            var content = this.ViewEngine.GetHtml(viewName, System.IO.File.ReadAllText("Views/" + viewName + ".html"), model);
+            var content = this.ViewEngine.GetHtml(viewName, System.IO.File.ReadAllText("Views/" + viewName + ".html"), model, this.User);
             var layoutFileContent = System.IO.File.ReadAllText("Views/_Layout.html");
             //foreach (var item in viewBag)
             //{
@@ -115,9 +120,9 @@ namespace MvcFramework
             //}
 
             var allContent = layoutFileContent.Replace("@RenderBody()", content);
-            var layoutContent = this.ViewEngine.GetHtml("_Layout", allContent, model);
+            var layoutContent = this.ViewEngine.GetHtml("_Layout", allContent, model, this.User);
 
-            return allContent;
+            return layoutContent;
         }
 
         private void PrepareHtmlResult(string content)

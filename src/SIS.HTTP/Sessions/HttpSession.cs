@@ -6,7 +6,7 @@ namespace SIS.HTTP.Sessions
 {
     public class HttpSession : IHttpSession
     {
-        private readonly IDictionary<string, object> parameters;
+        private readonly Dictionary<string, object> parameters;
 
         public HttpSession(string id)
         {
@@ -38,12 +38,13 @@ namespace SIS.HTTP.Sessions
 
         public object GetParameter(string name)
         {
-            if (this.parameters.ContainsKey(name))
-            {
-                return this.parameters[name];
-            }
+            //if (this.parameters.ContainsKey(name))
+            //{
+            //    return this.parameters[name];
+            //}
 
-            return null;
+            //return null;
+            return this.parameters.GetValueOrDefault(name, null);
         }
     }
 }

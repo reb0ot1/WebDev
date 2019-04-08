@@ -57,14 +57,14 @@ namespace SIS.HTTP.Responses
 
             result.Append($"{GlobalConstants.HttpOneProtocolFragment} {(int)this.StatusCode} {this.StatusCode.ToString()}");
             result.Append(GlobalConstants.NewLine);
-            result.Append(this.Headers.ToString());
+            result.Append(this.Headers);
             result.Append(GlobalConstants.NewLine);
 
             if (this.Cookies.HasCookies())
             {
                 foreach (var cookie in this.Cookies)
                 {
-                    result.Append($"Set-Cookie: {cookie.ToString()}").Append(GlobalConstants.NewLine);
+                    result.Append($"Set-Cookie: {cookie}").Append(GlobalConstants.NewLine);
                 }
             }
 

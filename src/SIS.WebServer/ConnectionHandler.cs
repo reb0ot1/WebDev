@@ -4,9 +4,11 @@ using System.Text;
 using System.Threading.Tasks;
 using SIS.HTTP.Cookies;
 using SIS.HTTP.Enums;
+using SIS.HTTP.Exceptions;
 using SIS.HTTP.Requests;
 using SIS.HTTP.Responses;
 using SIS.HTTP.Sessions;
+using SIS.WebServer.Results;
 using SIS.WebServer.Routing;
 
 namespace SIS.WebServer
@@ -55,13 +57,19 @@ namespace SIS.WebServer
 
         private IHttpResponse HandleRequest(IHttpRequest httpRequest)
         {
-            if (!this.serverRoutingTable.Routes.ContainsKey(httpRequest.RequestMethod)
-                || !this.serverRoutingTable.Routes[httpRequest.RequestMethod].ContainsKey(httpRequest.Path))
+            if (!this.serverRoutingTable.Contains(httpRequest.RequestMethod, httpRequest.Path))
             {
-                return new HttpResponse(HttpResponseStatusCode.NotFound);
+                return new TextResult($"Route with method {httpRequest.RequestMethod} and path \"{httpRequest.Path}\" not found.", HttpResponseStatusCode.NotFound);
             }
 
-            return this.serverRoutingTable.Routes[httpRequest.RequestMethod][httpRequest.Path].Invoke(httpRequest);
+            return this.serverRoutingTable.Get(httpRequest.RequestMethod, httpRequest.Path).Invoke(httpRequest);
+            //if (!this.serverRoutingTable.Contains(httpRequest.RequestMethod, httpRequest.Path)
+            //    || !this.serverRoutingTable.Routes[httpRequest.RequestMethod].ContainsKey(httpRequest.Path))
+            //{
+            //    return new HttpResponse(HttpResponseStatusCode.NotFound);
+            //}
+
+            //return this.serverRoutingTable.Routes[httpRequest.RequestMethod][httpRequest.Path].Invoke(httpRequest);
         }
 
         private async Task PrepareResponse(IHttpResponse httpResponse)
@@ -73,14 +81,30 @@ namespace SIS.WebServer
 
         public async Task ProcessRequestAsync()
         {
-            var httpRequest = await this.ReadRequest();
-
-            if (httpRequest != null)
+            try
             {
-                string sessionId = this.SetRequestSession(httpRequest);
-                var httpResponse = this.HandleRequest(httpRequest);
-                this.SetResponseSession(httpResponse, sessionId);
-                await this.PrepareResponse(httpResponse);
+                var httpRequest = await this.ReadRequest();
+
+                if (httpRequest != null)
+                {
+                    Console.WriteLine($"Processing: {httpRequest.RequestMethod} {httpRequest.Path}...");
+
+                    string sessionId = this.SetRequestSession(httpRequest);
+
+                    var httpResponse = this.HandleRequest(httpRequest);
+
+                    this.SetResponseSession(httpResponse, sessionId);
+
+                    await this.PrepareResponse(httpResponse);
+                }
+            }
+            catch (BadRequestException e)
+            {
+                await this.PrepareResponse(new TextResult(e.ToString(), HttpResponseStatusCode.BadRequest));
+            }
+            catch (Exception e)
+            {
+                await this.PrepareResponse(new TextResult(e.ToString(), HttpResponseStatusCode.InternalServerErorr));
             }
 
             this.client.Shutdown(SocketShutdown.Both);
@@ -109,7 +133,8 @@ namespace SIS.WebServer
         {
             if (sessionId != null)
             {
-                httpResponse.AddCookie(new HttpCookie(HttpSessionStorage.SessionCookieKey, $"{sessionId};HttpOnly=true"));
+                httpResponse.AddCookie(new HttpCookie(HttpSessionStorage.SessionCookieKey, sessionId));
+                //httpResponse.AddCookie(new HttpCookie(HttpSessionStorage.SessionCookieKey, $"{sessionId};HttpOnly=true"));
             }
         }
     }

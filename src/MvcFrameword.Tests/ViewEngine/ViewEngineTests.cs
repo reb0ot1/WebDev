@@ -25,7 +25,7 @@ namespace MvcFramework.Tests.ViewEngine
                 List = new List<string> { "Item1", "item2", "test", "123", "" }
             };
 
-            var result = viewEngine.GetHtml(testViewName, fileContent, model);
+            var result = viewEngine.GetHtml(testViewName, fileContent, model, null);
 
             Assert.Equal(expectedResult, result);
         }

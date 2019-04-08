@@ -7,18 +7,21 @@ namespace SIS.HTTP.Cookies
     public class HttpCookie
     {
         private const int HttpCookieDefaultExpirationDays = 3;
+        private const string HttpCookieDefaultPath = "/";
 
-        public HttpCookie(string key, string value, int expires = HttpCookieDefaultExpirationDays)
+        public HttpCookie(string key, string value, int expires = HttpCookieDefaultExpirationDays, string path = HttpCookieDefaultPath)
         {
             this.Key = key;
             this.Value = value;
             this.Expires = DateTime.UtcNow.AddDays(expires);
+            this.Path = path;
         }
 
-        public HttpCookie(string key, string value, bool isNew, int expires = HttpCookieDefaultExpirationDays) 
+        public HttpCookie(string key, string value, bool isNew, int expires = HttpCookieDefaultExpirationDays, string path = HttpCookieDefaultPath) 
             : this(key, value, expires)
         {
             this.IsNew = isNew;
+            this.Path = path;
         }
 
         public string Key { get; }
@@ -27,7 +30,11 @@ namespace SIS.HTTP.Cookies
 
         public DateTime Expires { get; private set; }
 
+        public string Path { get; set; }
+
         public bool IsNew { get; }
+
+        public bool HttpOnly { get; set; } = true;
 
         public void Delete()
         {
@@ -36,7 +43,17 @@ namespace SIS.HTTP.Cookies
 
         public override string ToString()
         {
-            return $"{this.Key}={this.Value}; Expires={this.Expires.ToString("R")}";
+            var sb = new StringBuilder();
+            sb.Append($"{this.Key}={this.Value}; Expires={this.Expires.ToString("R")}");
+
+            //if (this.HttpOnly)
+            //{
+            //    sb.Append("; HttpOnly");
+            //}
+
+            sb.Append($"; Path={this.Path}");
+
+            return sb.ToString();
         }
     }
 }

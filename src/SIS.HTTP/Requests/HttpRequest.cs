@@ -72,12 +72,12 @@ namespace SIS.HTTP.Requests
 
         private bool IsValidRequestQueryString(string queryString, string[] queryParameters)
         {
-            return true;
+            return !(string.IsNullOrEmpty(queryString) || queryParameters.Length < 1);
         } 
 
         private void ParseRequestMethod(string[] requestLine)
         {
-            var requestMethodParse = Enum.TryParse(requestLine[0].Capitalize(), out HttpRequestMethod method);
+            var requestMethodParse = Enum.TryParse<HttpRequestMethod>(requestLine[0].Capitalize(), out HttpRequestMethod method);
 
             if (!requestMethodParse)
             {
@@ -101,60 +101,49 @@ namespace SIS.HTTP.Requests
 
         private void ParseHeaders(string[] requestContent)
         {
-            for (int i = 0; i < requestContent.Length; i++)
+            int currentIndex = 0;
+
+            while (!string.IsNullOrEmpty(requestContent[currentIndex]))
             {
-                if (String.IsNullOrEmpty(requestContent[i]))
-                {
-                    break;
-                }
+                string[] headerArguments = requestContent[currentIndex++].Split(HttpRequestHeaderNameValueSeparator);
 
-                var headerProperties = requestContent[i].Split(": ");
-
-                if (headerProperties.Length != 2)
-                {
-                    throw new BadRequestException();
-                }
-
-                if (!this.Headers.ContainsHeader(headerProperties[0]))
-                {
-                    this.Headers.Add(new HttpHeader(headerProperties[0], headerProperties[1]));
-                }
+                this.Headers.Add(new HttpHeader(headerArguments[0], headerArguments[1]));
             }
 
-            if (this.Headers.ContainsHeader(GlobalConstants.HostName) == false)
+            if (!this.Headers.ContainsHeader(GlobalConstants.HostName))
             {
                 throw new BadRequestException();
             }
-
-            //int currentIndex = 0;
-
-            //while (!string.IsNullOrEmpty(requestContent[currentIndex]))
-            //{
-            //    string[] headerArguments = requestContent[currentIndex++].Split(HttpRequestHeaderNameValueSeparator);
-
-            //    this.Headers.Add(new HttpHeader(headerArguments[0], headerArguments[1]));
-            //}
-
-            //if (!this.Headers.ContainsHeader(GlobalConstants.HostHeaderKey))
-            //{
-            //    throw new BadRequestException();
-            //}
         }
 
         private void ParseQueryParameters()
         {
-            var queryString = this.Url.Split(new[] { '?', '#' });
-
-            if (queryString.Length > 1)
+            if (!this.Url.Contains('?'))
             {
-                var queryStringParameters = queryString[1].Split(HttpRequestParameterSeparator);
+                return;
+            }
 
-                foreach (var query in queryString)
-                {
-                    var keyValue = query.Split("=");
+            string queryString = this.Url
+                .Split(new[] { '?', '#' }, StringSplitOptions.None)[1];
 
-                    this.QueryData.Add(keyValue[0], new { Key = keyValue[0], Value = keyValue[1]});
-                }
+            if (string.IsNullOrWhiteSpace(queryString))
+            {
+                return;
+            }
+
+            string[] queryParameters = queryString.Split('&');
+
+            if (!this.IsValidRequestQueryString(queryString, queryParameters))
+            {
+                throw new BadRequestException();
+            }
+
+            foreach (var queryParameter in queryParameters)
+            {
+                string[] parameterArguments = queryParameter
+                    .Split('=', StringSplitOptions.RemoveEmptyEntries);
+
+                this.QueryData.Add(parameterArguments[0], parameterArguments[1]);
             }
         }
 
@@ -239,8 +228,6 @@ namespace SIS.HTTP.Requests
 
         private void ParseCookies()
         {
-
-
             if (!this.Headers.ContainsHeader(HttpHeader.Cookie)) return;
 
             string cookiesString = this.Headers.GetHeader(HttpHeader.Cookie).Value;

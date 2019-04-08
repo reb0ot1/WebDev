@@ -26,5 +26,16 @@ namespace SIS.WebServer.Routing
         {
             this.Routes[method].Add(path, func);
         }
+
+        public bool Contains(HttpRequestMethod requestMethod, string path)
+        {
+            return this.Routes.ContainsKey(requestMethod) &&
+                   this.Routes[requestMethod].ContainsKey(path.ToLower());
+        }
+
+        public Func<IHttpRequest, IHttpResponse> Get(HttpRequestMethod requestMethod, string path)
+        {
+            return this.Routes[requestMethod][path.ToLower()];
+        }
     }
 }

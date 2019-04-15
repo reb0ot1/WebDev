@@ -49,7 +49,7 @@ namespace CakesWebApp.Controllers
             }
 
             // Redirect
-            return this.Redirect    ("/");
+            return this.Redirect("/");
         }
 
         [HttpGet("/cakes/view")]
@@ -62,12 +62,6 @@ namespace CakesWebApp.Controllers
                 return this.BadRequestError("Cake not found.");
             }
 
-            //var viewBag = new Dictionary<string, string>
-            //{
-            //    {"Name", product.Name},
-            //    {"Price", product.Price.ToString(CultureInfo.InvariantCulture)},
-            //    {"ImageUrl", product.Url}
-            //};
             var viewModel = new ByIdViewModel
             {
                 Name = product.Name,
@@ -79,13 +73,26 @@ namespace CakesWebApp.Controllers
             return this.View("CakeById", viewModel);
         }
 
-        public class ByIdViewModel
+        [HttpGet("/cakes/search")]
+        public IHttpResponse Search(string searchText)
         {
-            public string Name { get; set; }
+            //var searchText = "cake";
+            ByIdViewModel[] cakes = this.Db.Products.Where(x => x.Name.Contains(searchText))
+                .Select(x => new ByIdViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Price = x.Price,
+                    ImageUrl = x.Url
+                }).ToArray();
 
-            public decimal Price { get; set; }
+            var searchModel = new SearchViewModel
+            {
+                Cakes = cakes,
+                SearchText = searchText
+            };
 
-            public string ImageUrl { get; set; }
+            return this.View("Search", searchModel);
         }
         
     }

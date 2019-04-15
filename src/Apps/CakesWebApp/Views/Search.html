@@ -1,0 +1,17 @@
+﻿<h1>Searching for @Model.SearchText :</h1>
+
+@if (Model.Cakes.Count() > 0)
+{
+    @foreach(var cake in Model.Cakes)
+    {
+<div>
+    <a href="/cakes/view?id=@cake.Id">@cake.Name</a> @cake.Price
+    <button class="btn-primary ">Order</button>
+</div>
+    }
+}
+@else
+{
+<h3>No results found.</h3>
+}
+

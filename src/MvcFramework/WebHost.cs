@@ -96,7 +96,7 @@ namespace MvcFramework
 
             foreach (var actionParameter in actionParameters)
             {
-                if (actionParameter.ParameterType.IsPrimitive)
+                if (actionParameter.ParameterType.IsPrimitive || actionParameter.ParameterType.IsTypeDefinition)
                 {
                     var stringValue = GetRequestData(request, actionParameter.Name);
                     object value = TryParse(stringValue, actionParameter.ParameterType);

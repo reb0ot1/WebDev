@@ -16,7 +16,7 @@ namespace SIS.HTTP.Headers
 
         public void Add(HttpHeader header)
         {
-            headers.Add(header.Key, header);
+            headers[header.Key] = header;
         }
 
         public bool ContainsHeader(string key)

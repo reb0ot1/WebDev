@@ -17,10 +17,15 @@ namespace CakesWebApp.Controllers
                                 RegisteredOn = x.DateOfRegistration,
                                 OrdersCount = x.Orders.Count()
                             }).FirstOrDefault();
-
+        
             if (user == null)
             {
                 return this.BadRequestError("Profile page not accessible for this user.");
+            }
+
+            if (user.OrdersCount > 0)
+            {
+                user.OrdersCount--;
             }
             // TODO: Read profile data
             // TODO: Create view model
